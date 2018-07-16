@@ -40,8 +40,6 @@ public class BM25FTermScorer extends Scorer {
   private float idf;
   private final BM25DocIdSetIterator iterator;
 
-
-
   public BM25FTermScorer(BM25FTermWeight bm25fTermWeight, SimScorer[] scorers,
       PostingsEnum[] docs, Bits acceptDocs) throws IOException {
     super(bm25fTermWeight);

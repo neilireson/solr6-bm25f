@@ -138,11 +138,9 @@ public class BM25FBooleanTermQuery extends Query {
 
         @Override
         public BM25FTermScorer scorer(LeafReaderContext context) throws IOException {
-            assert termStates.topReaderContext == ReaderUtil
-                    .getTopLevelContext(context) : "The top-reader used to create Weight ("
-                    + termStates.topReaderContext
-                    + ") is not the same as the current reader's top-reader ("
-                    + ReaderUtil.getTopLevelContext(context);
+            assert termStates.wasBuiltFor(ReaderUtil.getTopLevelContext(context)) :
+                    "The top-reader used to create Weight is not the same as the current reader's top-reader ("
+                            + ReaderUtil.getTopLevelContext(context);
 
             final SimScorer[] scorers = new SimScorer[stats.length];
             final PostingsEnum[] docsEnums = new PostingsEnum[stats.length];
@@ -277,8 +275,7 @@ public class BM25FBooleanTermQuery extends Query {
 
         final IndexReaderContext context = searcher.getTopReaderContext();
         final TermContext termState;
-        if ((perReaderTermState == null)
-                || (perReaderTermState.topReaderContext != context)) {
+        if (perReaderTermState == null || !perReaderTermState.wasBuiltFor(context)) {
             // make TermQuery single-pass if we don't have a PRTS or if the
             // context differs!
             termState = TermContext.build(context, term); // cache term
